@@ -5,6 +5,7 @@ using Persistence.Database;
 using Persistence.Repositories;
 using WebApi.Controllers;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,14 +18,29 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<BeerService>();
 builder.Services.AddScoped<IBeerRepository, BeerRepository>();
 
-builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BarConnection")));
+
+builder.Services.AddDbContext<ApplicationContext>(options =>
+{
+    if (builder.Configuration.GetValue<bool>("UseSqlServer"))
+    {
+        var connectionString = builder.Configuration.GetConnectionString("BarConnectionSqlServer");
+        options.UseSqlServer(connectionString);
+    }
+    else
+    {
+        var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
+        var connectionString = builder.Configuration.GetConnectionString("BarConnectionMariaDB");
+        options.UseMySql(connectionString, serverVersion);
+    }
+});
+
 
 var app = builder.Build();
 
 /*
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<BarContext>();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
     context.Database.Migrate();
 }
 */
@@ -40,6 +56,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-//app.MapControllers();
 app.MapBeerEndpoint();
+app.MapControllers();
+
 app.Run();

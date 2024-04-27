@@ -1,4 +1,4 @@
-namespace CodeFirst1
+namespace WebApi
 {
     public class WeatherForecast
     {

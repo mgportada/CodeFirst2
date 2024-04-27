@@ -1,6 +1,6 @@
-@CodeFirst1_HostAddress = http://localhost:5117
+@WebApi_HostAddress = http://localhost:5117
 
-GET {{CodeFirst1_HostAddress}}/weatherforecast/
+GET {{WebApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

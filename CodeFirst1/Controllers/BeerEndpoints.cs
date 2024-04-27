@@ -7,7 +7,7 @@ namespace WebApi.Controllers
     {
         public static void MapBeerEndpoint(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/api/beer/{id}", async (int id, [FromServices] BeerService beerService) =>
+            app.MapGet("/api/beer/{id}", async (int id, BeerService beerService) =>
             {
                 var beer = await beerService.GetAsync(id);
                 return beer is null ? Results.NotFound() : Results.Ok(beer);
